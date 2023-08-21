@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
