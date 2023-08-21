@@ -96,6 +96,28 @@ class Auth:
             raise credentials_exception
         return user
 
+    async def verify_reset_password_token(self, token: str) -> Dict[str, any]:
+        try:
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=self.ALGORITHM)
+            reset_password = payload.get("reset_password")
+            if reset_password:
+                return payload
+            return None
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.JWTError:
+            return None
+
+    async def create_reset_password_token(self, email: str) -> str:
+        expiration = datetime.utcnow() + timedelta(hours=1)  # Токен дійсний протягом 1 години
+        payload = {
+            "email": email,
+            "reset_password": True,
+            "exp": expiration
+        }
+        token = jwt.encode(payload, self.SECRET_KEY, algorithm=self.ALGORITHM)
+        return token
+
 
 
 
